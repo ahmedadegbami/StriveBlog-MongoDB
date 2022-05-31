@@ -31,7 +31,10 @@ blogPostsRouter.get("/:blogPostsId", async (req, res, next) => {
       res.send(blogPosts);
     } else {
       next(
-        createError(404, `User with id ${req.params.blogPostsId} not found!`)
+        createError(
+          404,
+          `BlogPosts with id ${req.params.blogPostsId} not found!`
+        )
       );
     }
   } catch (error) {
@@ -39,43 +42,48 @@ blogPostsRouter.get("/:blogPostsId", async (req, res, next) => {
   }
 });
 
-blogPostsRouter.put("/:userId", async (req, res, next) => {
+blogPostsRouter.put("/:blogPostsId", async (req, res, next) => {
   try {
-    const updatedUser = await BlogpostsModel.findByIdAndUpdate(
-      req.params.userId, // WHO
+    const updatedBlogPosts = await BlogpostsModel.findByIdAndUpdate(
+      req.params.blogPostsId, // WHO
       req.body, // HOW
       { new: true, runValidators: true } // OPTIONS. By default findByIdAndUpdate returns the record pre-modification. If you want to get back the newly updated record you should use the option: new true
       // By default validation is off here --> runValidators: true
     );
 
-    // ***************************************** ALTERNATIVE METHOD **********************************************
-    // const user = await UsersModel.findById(req.params.userId) // you get back a MONGOOSE DOCUMENT which is NOT a normal object
-
-    // user.firstName = "John"
-
-    // await user.save()
-
-    if (updatedUser) {
-      res.send(updatedUser);
+    if (updatedBlogPosts) {
+      res.send(updatedBlogPosts);
     } else {
-      next(createError(404, `User with id ${req.params.userId} not found!`));
+      next(
+        createError(
+          404,
+          `BlogPosts with id ${req.params.blogPostsId} not found!`
+        )
+      );
     }
   } catch (error) {
     next(error);
   }
 });
 
-// blogPostsRouter.delete("/:userId", async (req, res, next) => {
-//   try {
-//     const deletedUser = await UsersModel.findByIdAndDelete(req.params.userId);
-//     if (deletedUser) {
-//       res.status(204).send();
-//     } else {
-//       next(createError(404, `User with id ${req.params.userId} not found!`));
-//     }
-//   } catch (error) {
-//     next(error);
-//   }
-// });
+blogPostsRouter.delete("/:blogPostsId", async (req, res, next) => {
+  try {
+    const deletedBlogPosts = await BlogpostsModel.findByIdAndDelete(
+      req.params.blogPostsId
+    );
+    if (deletedBlogPosts) {
+      res.status(204).send();
+    } else {
+      next(
+        createError(
+          404,
+          `BlogPosts with id ${req.params.blogPostsId} not found!`
+        )
+      );
+    }
+  } catch (error) {
+    next(error);
+  }
+});
 
 export default blogPostsRouter;
