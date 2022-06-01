@@ -1,6 +1,7 @@
 import express from "express";
 import createError from "http-errors";
 import BlogpostsModel from "./model.js";
+import q2m from "query-to-mongo";
 
 const blogPostsRouter = express.Router();
 
@@ -16,8 +17,26 @@ blogPostsRouter.post("/", async (req, res, next) => {
 
 blogPostsRouter.get("/", async (req, res, next) => {
   try {
-    const blogPosts = await BlogpostsModel.find();
-    res.send(blogPosts);
+    // console.log("req.query", req.query);
+    // console.log("mongo-query", q2m(req.query));
+
+    const mongoQuery = q2m(req.query);
+    const total = await BlogpostsModel.countDocuments(mongoQuery);
+    // console.log("total", total);
+    const blogPosts = await BlogpostsModel.find(
+      mongoQuery.criteria,
+      mongoQuery.options.fields
+    )
+      .skip(mongoQuery.options.skip)
+      .limit(mongoQuery.options.limit)
+      .sort(mongoQuery.options.sort);
+
+    res.send({
+      links: mongoQuery.links("http://localhost:3001/blogPosts", total),
+      total,
+      totalPages: Math.ceil(total / mongoQuery.options.limit),
+      books
+    });
   } catch (error) {
     next(error);
   }

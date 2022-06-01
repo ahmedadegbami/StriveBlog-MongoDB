@@ -24,7 +24,8 @@
     "express": "^4.18.1",
     "express-list-endpoints": "^6.0.0",
     "http-errors": "^2.0.0",
-    "mongoose": "^6.3.5"
+    "mongoose": "^6.3.5",
+    "query-to-mongo": "^0.10.2"
   },
   "devDependencies": {
     "dotenv": "^16.0.1",
