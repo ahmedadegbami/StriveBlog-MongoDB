@@ -17,11 +17,11 @@ blogPostsRouter.post("/", async (req, res, next) => {
 
 blogPostsRouter.get("/", async (req, res, next) => {
   try {
-    // console.log("req.query", req.query);
-    // console.log("mongo-query", q2m(req.query));
+    console.log("req.query", req.query);
+    console.log("mongo-query", q2m(req.query));
 
     const mongoQuery = q2m(req.query);
-    const total = await BlogpostsModel.countDocuments(mongoQuery);
+    const total = await BlogpostsModel.countDocuments(mongoQuery.criteria);
     // console.log("total", total);
     const blogPosts = await BlogpostsModel.find(
       mongoQuery.criteria,
@@ -31,11 +31,14 @@ blogPostsRouter.get("/", async (req, res, next) => {
       .limit(mongoQuery.options.limit)
       .sort(mongoQuery.options.sort);
 
-    res.send({
+    //how to query on postman
+    //http://localhost:3001/Blogposts?category=sport&offset=0&limit=5&sort=author.name&omit=-_id
+
+    http: res.send({
       links: mongoQuery.links("http://localhost:3001/blogPosts", total),
       total,
       totalPages: Math.ceil(total / mongoQuery.options.limit),
-      books
+      blogPosts
     });
   } catch (error) {
     next(error);
