@@ -11,7 +11,7 @@ const blogPostsSchema = new Schema(
       value: { type: Number },
       unit: { type: String }
     },
-
+    authors: [{ type: Schema.Types.ObjectId, ref: "Author" }],
     comments: [{ text: String, rate: String, commentDate: Date }],
 
     content: { type: String, required: true }

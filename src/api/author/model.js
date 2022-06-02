@@ -10,4 +10,4 @@ const authorsSchema = new Schema(
   { timestamps: true }
 );
 
-export default model("Authors", authorsSchema);
+export default model("Author", authorsSchema);
