@@ -13,10 +13,11 @@ const blogPostsSchema = new Schema(
     },
     authors: [{ type: Schema.Types.ObjectId, ref: "Author" }],
     comments: [{ text: String, rate: String, commentDate: Date }],
+    likes: [{ userId: String, likeDate: Date }],
 
     content: { type: String, required: true }
   },
   { timestamps: true } // adds and manages automatically createdAt and updatedAt fields
 );
 
-export default model("BlogsPosts", blogPostsSchema); // this model is now automatically linked to the "users" collection, if the collection is not there it will be automatically created
+export default model("BlogPosts", blogPostsSchema); // this model is now automatically linked to the "users" collection, if the collection is not there it will be automatically created

@@ -32,7 +32,7 @@ blogPostsRouter.get("/", async (req, res, next) => {
     //how to query on postman
     //http://localhost:3001/Blogposts?category=sport&offset=0&limit=5&sort=author.name&omit=-_id
 
-    http: res.send({
+    res.send({
       links: mongoQuery.links("http://localhost:3001/blogPosts", total),
       total,
       totalPages: Math.ceil(total / mongoQuery.options.limit),
@@ -143,8 +143,7 @@ blogPostsRouter.post("/:blogPostsId/comments", async (req, res, next) => {
 blogPostsRouter.get("/:blogPostsId/comments", async (req, res, next) => {
   try {
     const blogPosts = await BlogpostsModel.findById(req.params.blogPostsId, {
-      _id: 0,
-      comments: 1
+      _id: 0
     });
     if (blogPosts) {
       res.send(blogPosts.comments);
@@ -249,6 +248,96 @@ blogPostsRouter.delete(
       );
       if (blogPosts) {
         res.status(204).send();
+      } else {
+        next(
+          createError(
+            404,
+            `BlogPosts with id ${req.params.blogPostsId} not found!`
+          )
+        );
+      }
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+//Here is for the blogPostsRouter likes
+
+blogPostsRouter.post("/:blogPostsId/likes", async (req, res, next) => {
+  try {
+    const blogPosts = await BlogpostsModel.findById(req.params.blogPostsId, {
+      _id: 0
+    });
+    if (blogPosts) {
+      const likeToInsert = {
+        ...blogPosts.toObject(),
+        likeDate: new Date(),
+        ...req.body
+      };
+      const updatedBlogPosts = await BlogpostsModel.findByIdAndUpdate(
+        req.params.blogPostsId, // WHO
+        { $push: { likes: likeToInsert } }, // HOW
+        { new: true, runValidators: true } // OPTIONS. By default findByIdAndUpdate returns the record pre-modification. If you want to get back the newly updated record you should use the option: new true
+        // By default validation is off here --> runValidators: true
+      );
+      res.send(updatedBlogPosts);
+    } else {
+      next(
+        createError(
+          404,
+          `BlogPosts with id ${req.params.blogPostsId} not found!`
+        )
+      );
+    }
+  } catch (error) {
+    next(error);
+  }
+});
+
+blogPostsRouter.get("/:blogPostsId/likes", async (req, res, next) => {
+  try {
+    const blogPosts = await BlogpostsModel.findById(req.params.blogPostsId, {
+      _id: 0
+    });
+    if (blogPosts) {
+      //send the likes excluding the _id
+
+      res.send(blogPosts.likes);
+    } else {
+      next(
+        createError(
+          404,
+
+          `BlogPosts with id ${req.params.blogPostsId} not found!`
+        )
+      );
+    }
+  } catch (error) {
+    next(error);
+  }
+});
+
+//Here is for the blogPostsRouter likes
+
+blogPostsRouter.delete(
+  "/:blogPostsId/likes/:likeId",
+  async (req, res, next) => {
+    try {
+      const blogPosts = await BlogpostsModel.findById(req.params.blogPostsId);
+      if (blogPosts) {
+        const index = blogPosts.likes.findIndex(
+          (like) => like._id.toString() === req.params.likeId
+        );
+        if (index !== -1) {
+          blogPosts.likes.splice(index, 1);
+          const updatedBlogPosts = await blogPosts.save();
+          res.send(updatedBlogPosts);
+        } else {
+          next(
+            createError(404, `Like with id ${req.params.likeId} not found!`)
+          );
+        }
       } else {
         next(
           createError(
