@@ -26,7 +26,8 @@ blogPostsRouter.get("/", async (req, res, next) => {
     )
       .skip(mongoQuery.options.skip)
       .limit(mongoQuery.options.limit)
-      .sort(mongoQuery.options.sort);
+      .sort(mongoQuery.options.sort)
+      .populate({ path: "authors", select: "name" });
 
     //how to query on postman
     //http://localhost:3001/Blogposts?category=sport&offset=0&limit=5&sort=author.name&omit=-_id
