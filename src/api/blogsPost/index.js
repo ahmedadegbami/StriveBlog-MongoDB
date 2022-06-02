@@ -113,6 +113,7 @@ blogPostsRouter.post("/:blogPostsId/comments", async (req, res, next) => {
     const blogComments = await BlogpostsModel.findById(req.params.blogPostsId, {
       _id: 0
     });
+
     if (blogComments) {
       const commentToInsert = {
         ...blogComments.toObject(),

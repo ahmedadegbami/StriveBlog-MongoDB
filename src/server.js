@@ -2,7 +2,8 @@ import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 import listEndpoints from "express-list-endpoints";
-import blogPostsRouter from "./api/users/index.js";
+import blogPostsRouter from "./api/blogsPost/index.js";
+import authorsRouter from "./api/author/index.js";
 import {
   badRequestHandler,
   genericErrorHandler,
@@ -20,6 +21,7 @@ server.use(express.json());
 // ******************************************************* ENDPOINTS ***********************************************
 
 server.use("/blogPosts", blogPostsRouter);
+server.use("/authors", authorsRouter);
 
 // ***************************************************** ERROR HANDLERS ********************************************
 
