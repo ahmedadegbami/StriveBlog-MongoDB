@@ -23,6 +23,9 @@ blogPostsRouter.get("/", async (req, res, next) => {
     const blogPosts = await BlogpostsModel.find(
       mongoQuery.criteria,
       mongoQuery.options.fields
+
+      //{ "likes.likeDate": 0, "likes._id": 0, "comments.commentDate": 0 } you can hardcode the fields you want to omit
+      // replace the mongoQuery.options.fields with the hardcoded fields
     )
       .skip(mongoQuery.options.skip)
       .limit(mongoQuery.options.limit)
@@ -39,6 +42,7 @@ blogPostsRouter.get("/", async (req, res, next) => {
       blogPosts
     });
   } catch (error) {
+    console.log(error);
     next(error);
   }
 });
