@@ -1,6 +1,7 @@
 import express from "express";
 import createError from "http-errors";
 import userModel from "./model.js";
+import { basicAuth } from "../../auth/basic.js";
 
 const userRouter = express.Router();
 
@@ -14,7 +15,7 @@ userRouter.post("/", async (req, res, next) => {
   }
 });
 
-userRouter.get("/", async (req, res, next) => {
+userRouter.get("/", basicAuth, async (req, res, next) => {
   try {
     const users = await userModel.find();
     res.send(users);
@@ -23,7 +24,7 @@ userRouter.get("/", async (req, res, next) => {
   }
 });
 
-userRouter.get("/:userId", async (req, res, next) => {
+userRouter.get("/:userId", basicAuth, async (req, res, next) => {
   try {
     const user = await userModel.findById(req.params.userId);
     if (user) {
@@ -36,7 +37,7 @@ userRouter.get("/:userId", async (req, res, next) => {
   }
 });
 
-userRouter.put("/:userId", async (req, res, next) => {
+userRouter.put("/:userId", basicAuth, async (req, res, next) => {
   try {
     const updatedUser = await userModel.findByIdAndUpdate(
       req.params.userId,
@@ -53,7 +54,7 @@ userRouter.put("/:userId", async (req, res, next) => {
   }
 });
 
-userRouter.delete("/:userId", async (req, res, next) => {
+userRouter.delete("/:userId", basicAuth, async (req, res, next) => {
   try {
     const deletedUser = await userModel.findByIdAndDelete(req.params.userId);
     if (deletedUser) {
