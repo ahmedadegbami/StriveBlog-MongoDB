@@ -6,8 +6,9 @@ import blogPostsRouter from "./api/blogPosts/index.js";
 import authorsRouter from "./api/authors/index.js";
 import userRouter from "./api/users/index.js";
 import {
-  badRequestHandler,
-  genericErrorHandler,
+  unauthorizedHandler,
+  forbiddenHandler,
+  catchAllHandler,
   notFoundHandler
 } from "./errorHandlers.js";
 
@@ -27,9 +28,10 @@ server.use("/users", userRouter);
 
 // ***************************************************** ERROR HANDLERS ********************************************
 
-server.use(badRequestHandler);
+server.use(unauthorizedHandler);
+server.use(forbiddenHandler);
+server.use(catchAllHandler);
 server.use(notFoundHandler);
-server.use(genericErrorHandler);
 
 mongoose.connect(process.env.MONGO_CONNECTION_URL);
 

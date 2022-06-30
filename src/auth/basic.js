@@ -2,7 +2,7 @@ import createHttpError from "http-errors";
 import atob from "atob";
 import UserModel from "../api/users/model.js";
 
-export const basicAuth = async (req, res, next) => {
+export const basicAuthMiddleware = async (req, res, next) => {
   if (!req.headers.authorization) {
     next(
       createHttpError(
