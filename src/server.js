@@ -5,6 +5,9 @@ import listEndpoints from "express-list-endpoints";
 import blogPostsRouter from "./api/blogPosts/index.js";
 import authorsRouter from "./api/authors/index.js";
 import userRouter from "./api/users/index.js";
+import passport from "passport";
+import googleStrategy from "./auth/googleOAuth.js";
+passport.use("google", googleStrategy);
 import {
   unauthorizedHandler,
   forbiddenHandler,
@@ -13,12 +16,16 @@ import {
 } from "./errorHandlers.js";
 
 const server = express();
+
+passport.use("google", googleStrategy);
+
 const port = process.env.PORT || 3001;
 
 // ****************************************************** MIDDLEWARES **********************************************
 
 server.use(cors());
 server.use(express.json());
+server.use(passport.initialize());
 
 // ******************************************************* ENDPOINTS ***********************************************
 

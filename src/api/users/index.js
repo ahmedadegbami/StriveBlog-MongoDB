@@ -5,8 +5,26 @@ import { basicAuthMiddleware } from "../../auth/basic.js";
 import { adminOnlyMiddleware } from "../../auth/admin.js";
 import { JWTAuthMiddleware } from "../../auth/token.js";
 import { generateAccessToken } from "../../auth/tools.js";
+import passport from "passport";
 
 const userRouter = express.Router();
+
+userRouter.get(
+  "/googleLogin",
+  passport.authenticate("google", { scope: ["profile", "email"] })
+);
+userRouter.get(
+  "/googleRedirect",
+  passport.authenticate("google", { session: false }),
+  (req, res, next) => {
+    try {
+      const { token } = req.user;
+      res.redirect(`${process.env.FE_URL}/users?accessToken=${token}`);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
 userRouter.post("/", async (req, res, next) => {
   try {
